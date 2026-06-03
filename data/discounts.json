@@ -1,0 +1,138 @@
+{
+  "profiles": [
+    {
+      "id": "none",
+      "name": "No Discount",
+      "discount_percent": 0,
+      "allowed_regions": [],
+      "excluded_categories": [],
+      "excluded_venues": []
+    },
+    {
+      "id": "wdw_ap_10",
+      "name": "Disney Annual Passholder (10%)",
+      "discount_percent": 10,
+      "allowed_regions": ["Disney World"],
+      "excluded_categories": [
+        "Alcoholic Beverages", 
+        "Beer", 
+        "Wine", 
+        "Cocktails", 
+        "Hard Cider", 
+        "Merchandise",
+        "Souvenir Specialties"
+      ],
+      "excluded_venues": [
+        "Space 220 Restaurant",
+        "Space 220 Lounge",
+        "Victoria & Albert's",
+        "Gideon's Bakehouse"
+      ]
+    },
+    {
+      "id": "wdw_dvc_10",
+      "name": "Disney Vacation Club (10%)",
+      "discount_percent": 10,
+      "allowed_regions": ["Disney World"],
+      "excluded_categories": [
+        "Alcoholic Beverages", 
+        "Beer", 
+        "Wine", 
+        "Cocktails", 
+        "Hard Cider", 
+        "Merchandise",
+        "Souvenir Specialties"
+      ],
+      "excluded_venues": [
+        "Space 220 Restaurant",
+        "Space 220 Lounge",
+        "Victoria & Albert's",
+        "Gideon's Bakehouse"
+      ]
+    },
+    {
+      "id": "wdw_dvc_20",
+      "name": "Disney Vacation Club (20%) - Special Promo",
+      "discount_percent": 20,
+      "allowed_regions": ["Disney World"],
+      "excluded_categories": [
+        "Alcoholic Beverages", 
+        "Beer", 
+        "Wine", 
+        "Cocktails", 
+        "Hard Cider", 
+        "Merchandise",
+        "Souvenir Specialties"
+      ],
+      "excluded_venues": [
+        "Space 220 Restaurant",
+        "Space 220 Lounge",
+        "Victoria & Albert's",
+        "Gideon's Bakehouse"
+      ]
+    },
+    {
+      "id": "uor_ap_10",
+      "name": "Universal Annual Passholder - Preferred (10%)",
+      "discount_percent": 10,
+      "allowed_regions": ["Universal Orlando"],
+      "excluded_categories": [
+        "Alcoholic Beverages", 
+        "Beer", 
+        "Wine", 
+        "Cocktails", 
+        "Hard Cider", 
+        "Merchandise"
+      ],
+      "excluded_venues": [
+        "Voodoo Doughnut"
+      ]
+    },
+    {
+      "id": "uor_ap_15",
+      "name": "Universal Annual Passholder - Premier (15%)",
+      "discount_percent": 15,
+      "allowed_regions": ["Universal Orlando"],
+      "excluded_categories": [
+        "Alcoholic Beverages", 
+        "Beer", 
+        "Wine", 
+        "Cocktails", 
+        "Hard Cider", 
+        "Merchandise"
+      ],
+      "excluded_venues": [
+        "Voodoo Doughnut"
+      ]
+    },
+    {
+      "id": "loews_premier_10",
+      "name": "Loews Hotels Premier Guest (10%)",
+      "discount_percent": 10,
+      "allowed_regions": ["Universal Orlando", "Loews Hotels"],
+      "excluded_categories": [
+        "Alcoholic Beverages",
+        "Beer",
+        "Wine",
+        "Cocktails",
+        "Hard Cider",
+        "Merchandise"
+      ],
+      "excluded_venues": []
+    },
+    {
+      "id": "loews_tm_20",
+      "name": "Loews Hotels Team Member (20%)",
+      "discount_percent": 20,
+      "allowed_regions": ["Universal Orlando", "Loews Hotels"],
+      "excluded_categories": [
+        "Alcoholic Beverages",
+        "Beer",
+        "Wine",
+        "Cocktails",
+        "Hard Cider"
+      ],
+      "excluded_venues": []
+    }
+  ]
+}

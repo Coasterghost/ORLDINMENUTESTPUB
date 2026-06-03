@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dining Master – Resort Dining Tracker</title>
+  <meta name="description" content="Browse menus, track price history, and plan trip budgets across Disney World and Universal Orlando."/>
+  <script type="module" crossorigin src="/assets/index-NGCv_xtw.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-CF1-mT8T.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo" id="app-logo" style="cursor: pointer;" title="Return to Dashboard">Dining Master</div>
+    <div class="resort-tabs" role="tablist" aria-label="Resort Filters">
+      <button class="tab-btn resort-tab active" data-resort="wdw" role="tab" aria-pressed="true" aria-label="Walt Disney World">🏰 Walt Disney World</button>
+      <button class="tab-btn resort-tab active" data-resort="loews" role="tab" aria-pressed="true" aria-label="Loews Hotels at Universal Orlando Resort">🏨 Loews Hotels at UOR</button>
+      <button class="tab-btn resort-tab active" data-resort="uor" role="tab" aria-pressed="true" aria-label="Universal Orlando Resort">🎬 Universal Orlando Resort</button>
+    </div>
+    <div class="header-controls">
+      <div class="ctrl-group">
+        <label for="currency-select">Currency</label>
+        <select id="currency-select">
+          <option value="USD">USD $</option>
+          <option value="GBP">GBP £</option>
+          <option value="EUR">EUR €</option>
+          <option value="CAD">CAD $</option>
+        </select>
+      </div>
+      <div class="ctrl-group">
+        <label for="party-input">Party</label>
+        <input type="number" id="party-input" value="1" min="1" max="50">
+      </div>
+      <button id="calc-toggle-btn" class="tab-btn">🧮 Trip Calculator</button>
+      <button id="settings-btn" class="tab-btn" title="Global Settings">⚙️ Settings</button>
+    </div>
+  </header>
+
+  <!-- SETTINGS MODAL -->
+  <div id="settings-modal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div class="modal-content panel" style="width: 400px; max-width: 90%; background: var(--panel-bg); border: 1px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+      <div class="panel-head" style="justify-content: space-between; border-bottom: 1px solid var(--border);">
+        <span class="panel-label">Global Settings</span>
+        <button id="close-settings-btn" class="mini-btn">✕</button>
+      </div>
+      <div class="panel-body" style="display: flex; flex-direction: column; gap: 1rem;">
+        <div class="setting-group">
+          <label style="font-size: 0.8rem; font-weight: 700; color: var(--accent);">Default Discount</label>
+          <select id="global-discount-select" class="mini-sort" style="width: 100%; margin-top: 0.5rem; padding: 0.5rem;">
+            <option value="none">Loading discounts...</option>
+          </select>
+        </div>
+        <div class="setting-group">
+          <label style="font-size: 0.8rem; font-weight: 700; color: var(--accent);">Dietary / Allergen Auto-Filter</label>
+          <select id="global-dietary-select" class="mini-sort" style="width: 100%; margin-top: 0.5rem; padding: 0.5rem;">
+            <option value="none">None</option>
+            <option value="Vegetarian">Vegetarian</option>
+            <option value="Vegan">Vegan</option>
+            <option value="Gluten-Free">Gluten-Free</option>
+            <option value="Dairy-Free">Dairy-Free</option>
+          </select>
+        </div>
+        <div class="setting-group">
+          <label style="font-size: 0.8rem; font-weight: 700; color: var(--accent);">UI Preferences</label>
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+            <label class="switch">
+              <input type="checkbox" id="shorten-desc-toggle" checked>
+              <span class="slider round"></span>
+            </label>
+            <span style="font-size: 0.8rem; color: var(--text);">Shorten Long Descriptions</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.7rem;">
+            <label class="switch">
+              <input type="checkbox" id="show-removed-toggle">
+              <span class="slider round"></span>
+            </label>
+            <span style="font-size: 0.8rem; color: var(--text);">Show Removed Items</span>
+          </div>
+        </div>
+        <div class="setting-group">
+          <label style="font-size: 0.8rem; font-weight: 700; color: var(--accent);">View Filters</label>
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+            <label class="switch">
+              <input type="checkbox" id="changes-only-toggle" aria-label="Show only changes filter">
+              <span class="slider round"></span>
+            </label>
+            <span style="font-size: 0.8rem; color: var(--text);">Show Only Changes</span>
+          </div>
+          <div id="changes-type-wrap" style="display: none; margin-top: 0.5rem;">
+            <select id="changes-type-select" class="mini-sort" style="width: 100%; padding: 0.5rem;" aria-label="Change type filter">
+              <option value="all">All Changes</option>
+              <option value="increases">Increases Only</option>
+              <option value="removals">Removals Only</option>
+            </select>
+          </div>
+          <div id="compare-from-container" style="display: none; margin-top: 0.7rem; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">FROM:</span>
+            <select id="compare-from-select" style="flex:1; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 0.3rem 0.6rem; font-size: 0.8rem; font-weight: 600; cursor: pointer;"></select>
+          </div>
+        </div>
+        <div class="setting-group" style="padding-top: 1rem; border-top: 1px solid var(--border); text-align: center; font-size: 0.7rem; color: var(--text-muted); line-height: 1.4;">
+          <span class="db-date-badge" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--text-dim);"></span>
+          <strong>Disclaimer:</strong> Menu data and prices are crowdsourced/scanned and may be inaccurate or outdated. Please refer to official menus when on property. We hold no liability for incorrect information.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYOUT -->
+  <div id="app" class="app-layout">
+
+    <!-- LEFT: Restaurant List -->
+    <aside class="left-col">
+      <div class="panel">
+        <div class="panel-head" style="flex-direction: column; align-items: stretch; gap: 0.8rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span class="panel-label">Restaurants</span>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <button id="revisions-btn" class="mini-btn" title="View Latest Menu Updates">📋</button>
+              <span id="venue-count" class="count-badge">—</span>
+            </div>
+          </div>
+          <select id="venue-sort-select" class="mini-sort" title="Sort venues">
+            <option value="name">Sort: A-Z (Alphabetical)</option>
+            <option value="category">Sort: Category (Resort)</option>
+            <option value="hotel">Sort: Venue-Hotel (Location)</option>
+          </select>
+          <select id="venue-location-select" class="mini-sort" title="Filter by Area" style="margin-top: 0.5rem; display: none;">
+            <option value="all">All Areas</option>
+          </select>
+        </div>
+        <div class="panel-body">
+          <div class="search-wrap">
+            <div class="search-mode-toggle" style="display: flex; background: rgba(255,255,255,0.05); border-radius: 6px; margin-bottom: 0.5rem; padding: 2px;">
+              <button id="mode-venues-btn" class="search-mode-btn active">Venues</button>
+              <button id="mode-items-btn" class="search-mode-btn">Items</button>
+            </div>
+            <div class="search-input-wrap" style="display: flex; align-items: center; gap: 0.5rem;">
+              <input type="text" id="restaurant-search" placeholder="Search venues…" autocomplete="off" style="flex: 1;">
+              <select id="search-strictness-select" class="mini-sort" style="display: none;" title="Search Strictness">
+                <option value="strict">Strict (Exact)</option>
+                <option value="normal" selected>Normal</option>
+                <option value="loose">Loose (+Desc)</option>
+                <option value="extreme">Extreme (All)</option>
+              </select>
+            </div>
+          </div>
+          <div id="restaurant-list" class="venue-list"></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MIDDLE: Menus + History + Items -->
+    <main class="main-col">
+      <div class="panel" id="menu-pill-card">
+        <div class="panel-body" style="padding-top:1.25rem;">
+          <div id="menu-pill-list" class="pill-bar"></div>
+        </div>
+      </div>
+
+      <div class="panel" id="history-card">
+        <div class="panel-body">
+          <div class="chart-hdr" style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+              <div class="chart-name">Price History: <span id="selected-item-name" style="color:var(--accent)"></span></div>
+              <div class="chart-sub">All recorded snapshots</div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <div id="chart-zoom-controls" style="display: flex; gap: 0.3rem; background: rgba(255,255,255,0.05); padding: 0.2rem; border-radius: 6px;">
+                <button class="mini-btn zoom-btn active" data-zoom="all" style="font-size:0.7rem; padding: 0.15rem 0.4rem;">ALL</button>
+                <button class="mini-btn zoom-btn" data-zoom="1y" style="font-size:0.7rem; padding: 0.15rem 0.4rem;">1Y</button>
+                <button class="mini-btn zoom-btn" data-zoom="6m" style="font-size:0.7rem; padding: 0.15rem 0.4rem;">6M</button>
+                <button class="mini-btn zoom-btn" data-zoom="1m" style="font-size:0.7rem; padding: 0.15rem 0.4rem;">1M</button>
+              </div>
+              <button id="close-history-btn" class="mini-btn" style="cursor: pointer;" title="Close Price History" aria-label="Close Price History">✕</button>
+            </div>
+          </div>
+          <div style="position: relative; height: 150px; width: 100%;">
+            <canvas id="history-chart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-body">
+          <div class="items-hdr">
+            <div style="display: flex; flex-direction: column;">
+              <div id="restaurant-name-label" class="venue-name-hdr"></div>
+              <div id="venue-variant-switcher" style="margin-bottom: 0.5rem; display: none; gap: 0.5rem; flex-wrap: wrap;"></div>
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <div class="items-hdr-title" id="menu-type-label">Select a restaurant</div>
+                <span id="items-count-badge" class="count-badge" style="display:none;"></span>
+                <div id="revision-sort-container" style="display: none; align-items: center; gap: 0.8rem; margin-left: 0.5rem;">
+                  <div style="display: flex; align-items: center; gap: 0.4rem;">
+                    <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Sort:</span>
+                    <select id="revision-sort-select" class="mini-sort">
+                      <option value="date">Date</option>
+                      <option value="category">Category</option>
+                      <option value="hotel">Venue-Hotel</option>
+                    </select>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 0.4rem;">
+                    <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Show:</span>
+                    <select id="revision-filter-select" class="mini-sort">
+                      <option value="all">All Changes</option>
+                      <option value="increases">Increases Only</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="snapshot-container" style="display: none; align-items: center; gap: 1.5rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span id="target-date-label" style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">TIME MACHINE:</span>
+                <select id="snapshot-select" style="background: rgba(45, 212, 191, 0.1); border: 1px solid var(--accent); color: var(--accent); border-radius: 8px; padding: 0.3rem 0.6rem; font-size: 0.8rem; font-weight: 700; cursor: pointer;">
+                  <option value="latest">Latest Scan</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div id="section-filter-bar" class="section-filter" style="display: none;"></div>
+          <div id="item-grid" class="menu-grid">
+            <div class="empty-state">
+              <div class="empty-icon">🍽️</div>
+              <p>Select a restaurant from the sidebar<br>to browse menu items and price history.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- RIGHT: Calculator (Collapsible) -->
+    <aside id="calc-aside" class="calc-aside collapsed">
+      <div class="calc-panel calc-wrap">
+        <div class="calc-head">
+          <h2 style="font-size: 1rem; margin: 0; display: flex; align-items: center; gap: 0.5rem;"><span style="font-size: 1.2rem;">🧮</span> Planner</h2>
+          <div style="display: flex; gap: 0.5rem;">
+            <button id="export-cart-btn" class="mini-btn" title="Export Planner">📤</button>
+            <button id="clear-cart" class="mini-btn" title="Clear Planner">🗑️</button>
+          </div>
+        </div>
+        <div class="calc-body" style="display: flex; flex-direction: column; gap: 1rem; padding: 1rem; flex: 1; overflow-y: auto; min-height: 0;">
+        
+          <div class="budget-setup" style="background: rgba(255,255,255,0.03); padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <label style="font-size: 0.8rem; font-weight: 700; color: var(--accent);">Daily Budget</label>
+              <div style="display: flex; align-items: center; gap: 0.3rem;">
+                <span style="color: var(--text-muted); font-size: 0.8rem;">$</span>
+                <input type="number" id="daily-budget-input" value="0" min="0" step="10" style="width: 60px; padding: 0.2rem; border-radius: 4px; border: 1px solid var(--border); background: var(--panel-bg); color: var(--text); font-family: var(--font);">
+              </div>
+            </div>
+            <div class="progress-bar-wrap" style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+              <div id="budget-progress-bar" style="height: 100%; width: 0%; background: var(--accent); transition: width 0.3s ease, background 0.3s ease;"></div>
+            </div>
+            <div id="budget-status-text" style="font-size: 0.7rem; color: var(--text-muted); text-align: right; margin-top: 0.3rem;">Set a budget above</div>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Adding to:</span>
+            <select id="active-meal-select" class="mini-sort" style="width: 120px;">
+              <option value="Breakfast">🍳 Breakfast</option>
+              <option value="Lunch">🥗 Lunch</option>
+              <option value="Dinner">🍽️ Dinner</option>
+              <option value="Snacks">🍿 Snacks</option>
+            </select>
+          </div>
+
+          <div id="cart-items" style="flex: 1; overflow-y: auto; min-height: 80px;">
+            <div class="empty-state" style="padding: 1rem 0;">No items added.<br>Add items to plan your budget.</div>
+          </div>
+
+          <div class="calc-totals">
+            <div class="tot-row"><span>Subtotal</span><span id="subtotal-val">$0.00</span></div>
+            <div class="tot-row" id="discount-row" style="display:none; color: var(--accent);"><span>Discount</span><span id="discount-val">$0.00</span></div>
+            <div class="tot-row"><span>Sales Tax (6.5%)</span><span id="tax-val">$0.00</span></div>
+            <div class="tot-row" id="gratuity-row" style="display:none;"><span>Gratuity (18%)</span><span id="gratuity-val">$0.00</span></div>
+            <div class="grand-row">
+              <span>Total</span><span id="total-val">$0.00</span>
+            </div>
+            <div class="tot-row" id="savings-row" style="display:none; background: rgba(34,197,94,0.1); color: #22c55e; padding: 0.5rem; border-radius: 6px; margin-top: 0.5rem; font-size: 0.75rem; text-align: center;"></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <div style="text-align: center; font-size: 0.7rem; color: var(--text-muted); padding: 1.5rem; line-height: 1.5; max-width: 800px; margin: 0 auto;">
+    <span class="db-date-badge" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--text-dim);"></span>
+    <strong>Disclaimer:</strong> Menu data and prices are crowdsourced/scanned and may be inaccurate or outdated. Please refer to official menus when on property. We hold no liability for incorrect information.
+  </div>
+
+</body>
+</html>
