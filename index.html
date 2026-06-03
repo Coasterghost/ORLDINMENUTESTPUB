@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Park Dining – Resort Dining Tracker</title>
   <meta name="description" content="Browse menus, track price history, and plan trip budgets across Disney World and Universal Orlando."/>
-  <script type="module" crossorigin src="/ORLDINMENUTESTPUB/assets/index-CwQO1z_f.js"></script>
-  <link rel="stylesheet" crossorigin href="/ORLDINMENUTESTPUB/assets/index-CF1-mT8T.css">
+  <script type="module" crossorigin src="/ORLDINMENUTESTPUB/assets/index-DdBx_8IH.js"></script>
+  <link rel="stylesheet" crossorigin href="/ORLDINMENUTESTPUB/assets/index-COloC7pk.css">
 </head>
 <body>
 
@@ -101,8 +101,7 @@
         </div>
         <div class="setting-group" style="padding-top: 1rem; border-top: 1px solid var(--border); text-align: center; font-size: 0.7rem; color: var(--text-muted); line-height: 1.4;">
           <span class="db-date-badge" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--text-dim);"></span>
-          <strong>THIS SITE IS A TEST BED PROJECT</strong>
-          <strong>Disclaimer:</strong> Menu data and prices are crowdsourced/scanned and may be inaccurate or outdated. Please refer to official menus when on property. We hold no liability for incorrect information.
+          <strong>Disclaimer: THIS IS A TEST OF SEEING HOW FAR I CAN PUSH AI ON FREE TIERS OF CODING AGENTS.</strong> Menu data and prices are crowdsourced/scanned and may be inaccurate or outdated. Please refer to official menus when on property. We hold no liability for incorrect information.
         </div>
       </div>
     </div>
@@ -289,9 +288,126 @@
 
   <div style="text-align: center; font-size: 0.7rem; color: var(--text-muted); padding: 1.5rem; line-height: 1.5; max-width: 800px; margin: 0 auto;">
     <span class="db-date-badge" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--text-dim);"></span>
-    <strong>THIS SITE IS A TEST BED PROJECT</strong>
-    <strong>Disclaimer:</strong> Menu data and prices are crowdsourced/scanned and may be inaccurate or outdated. Please refer to official menus when on property. We hold no liability for incorrect information.
+    <strong>Disclaimer: THIS IS A TEST OF SEEING HOW FAR I CAN PUSH AI ON FREE TIERS OF CODING AGENTS.</strong> Menu data and prices are crowdsourced/scanned and may be inaccurate or outdated. Please refer to official menus when on property. We hold no liability for incorrect information.
   </div>
 
+  <!-- MOBILE: Drawer Overlay -->
+  <div class="mobile-overlay" id="mobile-overlay"></div>
+
+  <!-- MOBILE: Bottom Navigation Bar -->
+  <nav id="mobile-bottom-nav" role="navigation" aria-label="Mobile navigation">
+    <button class="mobile-nav-btn" id="mobile-nav-venues" aria-label="Browse restaurants">
+      <span class="nav-icon">🍽️</span>
+      <span>Venues</span>
+    </button>
+    <button class="mobile-nav-btn active" id="mobile-nav-menu" aria-label="View menu">
+      <span class="nav-icon">📋</span>
+      <span>Menu</span>
+    </button>
+    <button class="mobile-nav-btn" id="mobile-nav-calc" aria-label="Trip planner">
+      <span class="nav-icon">🧮</span>
+      <span>Planner</span>
+    </button>
+    <button class="mobile-nav-btn" id="mobile-nav-settings" aria-label="Settings">
+      <span class="nav-icon">⚙️</span>
+      <span>Settings</span>
+    </button>
+  </nav>
+
+
+  <!-- MOBILE INTERACTIONS -->
+  <script>
+    (function() {
+      var overlay = document.getElementById('mobile-overlay');
+      var leftCol = document.querySelector('.left-col');
+      var navVenues = document.getElementById('mobile-nav-venues');
+      var navMenu = document.getElementById('mobile-nav-menu');
+      var navCalc = document.getElementById('mobile-nav-calc');
+      var navSettings = document.getElementById('mobile-nav-settings');
+
+      function isMobile() { return window.innerWidth <= 768; }
+
+      function openDrawer() {
+        leftCol.classList.add('mobile-open');
+        overlay.classList.add('active');
+        navVenues.classList.add('active');
+        navMenu.classList.remove('active');
+      }
+      function closeDrawer() {
+        leftCol.classList.remove('mobile-open');
+        overlay.classList.remove('active');
+        navVenues.classList.remove('active');
+      }
+
+      overlay.addEventListener('click', closeDrawer);
+
+      navVenues.addEventListener('click', function() {
+        if (!isMobile()) return;
+        if (leftCol.classList.contains('mobile-open')) {
+          closeDrawer();
+        } else {
+          openDrawer();
+        }
+      });
+
+      navMenu.addEventListener('click', function() {
+        closeDrawer();
+        navMenu.classList.add('active');
+        // scroll main-col into view
+        var mainCol = document.querySelector('.main-col');
+        if (mainCol) mainCol.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+
+      navCalc.addEventListener('click', function() {
+        closeDrawer();
+        // Toggle the desktop calc for mobile by opening settings as fallback
+        var calcBtn = document.getElementById('calc-toggle-btn');
+        if (calcBtn) calcBtn.click();
+        // Show aside temporarily on mobile
+        var aside = document.getElementById('calc-aside');
+        if (aside && isMobile()) {
+          aside.style.display = 'block';
+          aside.style.position = 'fixed';
+          aside.style.bottom = '60px';
+          aside.style.right = '0';
+          aside.style.left = '0';
+          aside.style.zIndex = '400';
+          aside.style.width = '100%';
+          aside.style.maxHeight = '70vh';
+          aside.style.overflowY = 'auto';
+          aside.style.borderRadius = '16px 16px 0 0';
+          aside.style.opacity = '1';
+          aside.classList.remove('collapsed');
+          navCalc.classList.add('active');
+
+          // Close on outside click
+          function onOutside(e) {
+            if (!aside.contains(e.target) && e.target !== navCalc) {
+              aside.style.display = 'none';
+              navCalc.classList.remove('active');
+              document.removeEventListener('click', onOutside);
+            }
+          }
+          setTimeout(function() { document.addEventListener('click', onOutside); }, 100);
+        }
+      });
+
+      navSettings.addEventListener('click', function() {
+        closeDrawer();
+        var settingsModal = document.getElementById('settings-modal');
+        if (settingsModal) settingsModal.style.display = 'flex';
+      });
+
+      // Auto-close drawer when a venue is selected on mobile
+      document.addEventListener('click', function(e) {
+        if (!isMobile()) return;
+        var item = e.target.closest('.venue-item');
+        if (item && leftCol.classList.contains('mobile-open')) {
+          setTimeout(closeDrawer, 200);
+          navMenu.classList.add('active');
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
